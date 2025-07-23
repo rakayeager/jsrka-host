@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Play Movie</title>
+    <style>
+        body {
+            background-color: #141414;
+            color: #fff;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        video {
+            width: 100%;
+            max-width: 800px;
+            border: 1px solid #333;
+            border-radius: 4px;
+        }
+
+        .title {
+            font-size: 2rem;
+            margin: 20px 0;
+        }
+
+        .description {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            background-color: #e50914;
+            color: #fff;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #f40612;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <video controls>
+            <source src="sm.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <h1 class="title" id="movie-title"></h1>
+        <p class="description" id="movie-description"></p>
+        <button class="btn" onclick="window.history.back();">Back to Home</button>
+    </div>
+
+    <script>
+        // Function to get query parameters from URL
+        function getQueryParams() {
+            const params = {};
+            const queryString = window.location.search.substring(1);
+            const regex = /([^&=]+)=([^&]*)/g;
+            let m;
+            while (m = regex.exec(queryString)) {
+                params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+            }
+            return params;
+        }
+
+        // Get movie title and description from URL
+        const params = getQueryParams();
+        document.getElementById('movie-title').innerText = params.title || 'Movie Title';
+        document.getElementById('movie-description').innerText = params.description || 'This is a brief description of the movie.';
+    </script>
+</body>
+</html>

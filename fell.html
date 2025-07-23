@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>rbackside</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        :root {
+            --netflix-red: #e50914;
+            --netflix-dark: #141414;
+            --netflix-gray: #333;
+            --netflix-light-gray: #8c8c8c;
+            --netflix-white: #fff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--netflix-dark);
+            color: var(--netflix-white);
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 45px;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, transparent 100%);
+            z-index: 100;
+        }
+
+        .logo {
+            height: 40px;
+            width: auto;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .avatar {
+            height: 32px;
+            width: 32px;
+            border-radius: 4px;
+        }
+
+        .hero {
+            height: 100vh;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-left: 45px;
+            position: relative;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.4);
+            background-image: linear-gradient(
+                to top,
+                rgba(0,0,0,0.8) 0,
+                rgba(0,0,0,0) 60%,
+                rgba(0,0,0,0.8) 100%
+            );
+        }
+
+        .hero-content {
+            max-width: 600px;
+            z-index: 1;
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .hero-description {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--netflix-red);
+            color: var(--netflix-white);
+        }
+
+        .btn-secondary {
+            background-color: rgba(109, 109, 110, 0.7);
+            color: var(--netflix-white);
+        }
+
+        .btn-icon {
+            font-size: 1.5rem;
+        }
+
+        .row {
+            padding: 0 45px;
+            margin-bottom: 30px;
+        }
+
+        .row-title {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+        }
+
+        .row-content {
+            display: flex;
+            overflow-x: auto;
+            gap: 8px;
+            scrollbar-width: none;
+        }
+
+        .row-content::-webkit-scrollbar {
+            display: none;
+        }
+
+        .movie-card {
+            min-width: 220px;
+            height: 120px;
+            transition: transform 0.3s ease;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .movie-card:hover {
+            transform: scale(1.1);
+            z-index: 10;
+        }
+
+        .movie-card-large {
+            min-width: 300px;
+            height: 170px;
+        }
+
+        .movie-poster {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 15px 20px;
+            }
+            
+            .hero {
+                padding-left: 20px;
+            }
+            
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .hero-description {
+                font-size: 1rem;
+            }
+            
+            .row {
+                padding: 0 20px;
+            }
+            
+            .btn {
+                padding: 8px 16px;
+                font-size: 0.9rem;
+            }
+            
+            .movie-card {
+                min-width: 160px;
+                height: 90px;
+            }
+            
+            .movie-card-large {
+                min-width: 200px;
+                height: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        function NetflixApp() {
+            const movies = [
+                {
+                    id: 1,
+                    title: "FLLIITA",
+                    description: "beautiful, pretty, beauty, effortless, opulent, unparalleled, glamorous, magnificent, bewitching, immaculate, spectacular, exotic, bewitching, radiating, coveted, commanding, unrivaled, supreme, unassallable, unmatched, resplendent, enthralling, spellbinding, enigmatic, distinguished, unfading, irresistible, striking, vivacious, regal, impressive, majestic, ethereal, unforgettable, incomparable, breathtaking, sumptuous, elegant, resplendent, radiant, alluring, enchanting, ethereal, elegant, gorgeous graceful, unrivaled, graceful, mesmerizing, impeccable, charming, ravishing, sophisticated, bewitching, authentic, exceptional, sophisticated, sublime, opulent, gorgeous, awe-inspiring, awesome, statuesque, exquisite, alluring, prettiest, dazzling, effortless, cutest, perfect, princess, supreme.",
+                    type: "large"
+                },
+                {
+                    id: 2,
+                    title: "Stranger Things",
+                    description: "",
+                    type: "normal"
+                },
+                {
+                    id: 3,
+                    title: "The Crown",
+                    description: "",
+                    type: "normal"
+                },
+                {
+                    id: 4,
+                    title: "Dark",
+                    description: "",
+                    type: "normal"
+                },
+                {
+                    id: 5,
+                    title: "Narcos",
+                    description: "",
+                    type: "normal"
+                },
+                {
+                    id: 6,
+                    title: "Black Mirror",
+                    description: "",
+                    type: "normal"
+                },
+                {
+                    id: 7,
+                    title: "The Witcher",
+                    description: "",
+                    type: "normal"
+                },
+                {
+                    id: 8,
+                    title: "Breaking Bad",
+                    description: "",
+                    type: "large"
+                }
+            ];
+
+            const categories = [
+                {
+                    id: 1,
+                    name: "Popular on My Hearth",
+                    movies: [
+                        {   
+                            id: 1,
+                            title: "Money Heist",
+                            description: "",
+                            type: "large",
+                            poster: "fei.jpg"
+                        },
+                        {
+                            id: 2,
+                            title: "Stranger Things",
+                            description: "",
+                            type: "large",
+                            poster: "imf.jpg"
+                        },
+                        {
+                            id: 8,
+                            title: "Breaking Bad",
+                            description: "",
+                            type: "large",
+                            poster: "fl.jpg"
+                        }
+                    ]
+                },
+                {
+                    id: 1,
+                    name: "CUTES GIRL IN THE WORLD",
+                    movies: [
+                        {   
+                            id: 1,
+                            title: "Money Heist",
+                            description: "",
+                            type: "large",
+                            poster: "f.jpg"
+                        },
+                        {
+                            id: 2,
+                            title: "Stranger Things",
+                            description: "",
+                            type: "large",
+                            poster: "fel.jpg"
+                        },
+                        {
+                            id: 8,
+                            title: "Breaking Bad",
+                            description: "",
+                            type: "large",
+                            poster: "fe.jpg"
+                        }
+                    ]
+                },
+               
+            ];
+
+            return (
+                <div className="netflix-app">
+                    <header className="navbar">
+                        <img className="logo" src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/cd406383-4614-4e30-bbc5-38256ffa3611.png" alt="Netflix logo" />
+                        <div className="nav-right">
+                            <span>Browse</span>
+                            <img className="avatar" src="fl.jpg" alt="User profile avatar" />
+                        </div>
+                    </header>
+
+                    <section className="hero" style={{
+                        backgroundImage: `url(${movies[0].type === 'large' ? 
+                            "f.jpg" : 
+                            "https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/e6d9f1c9-656e-4b44-9165-b6a053bedc3f.png"})`
+                    }}>
+                        <div className="hero-content">
+                           
+                            <div className="hero-buttons">
+                               <section className="hero" style={{
+  
+}}>
+    <div className="hero-content">
+        <h1 className="hero-title">{movies[0].title}</h1>
+        <p className="hero-description">{movies[0].description}</p>
+        <div className="hero-buttons">
+            <button className="btn btn-primary" onClick={() => {
+                window.location.href = `/play.html?title=${encodeURIComponent(movies[0].title)}&description=${encodeURIComponent(movies[0].description)}`;
+            }}>
+                <span className="btn-icon">▶</span>
+                <span>Play</span>
+            </button>
+            <button className="btn btn-secondary">
+                <span className="btn-icon">ⓘ</span>
+                <span>More Info</span>
+            </button>
+        </div>
+    </div>
+</section>
+
+                            </div>
+                        </div>
+                    </section>
+
+                    <main>
+                        {categories.map(category => (
+                            <div className="row" key={category.id}>
+                                <h2 className="row-title">{category.name}</h2>
+                                <div className="row-content">
+                                    {category.movies.map(movie => (
+                                        <div className={`movie-card ${movie.type === 'large' ? 'movie-card-large' : ''}`} key={movie.id}>
+                                            <img 
+                                                className="movie-poster" 
+                                                src={movie.poster} 
+                                                alt={`Poster for ${movie.title} showing dramatic scene from the ${movie.title.includes('Money') ? 'heist' : 'show'} in dark cinematic tones`} 
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
+                    </main>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<NetflixApp />, document.getElementById('root'));
+    </script>
+</body>
+</html>
+
